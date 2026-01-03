@@ -1,32 +1,69 @@
 # Desafio técnico (Projeto Tenda) - Coupon API
 
-## 1. Decisões técnicas e de arquitetura
+## 1. Teck Stack
+
+- **Java 17**;
+- **Spring Boot 3.5.9**
+    - *Spring Web*
+    - *Spring Data JPA*
+    - *Bean Validation*
+- **H2 Database**
+- **Lombok**;
+- **SpringDoc OpenAPI (Swagger)**;
+- **Docker e Docker Compose**;
+- **JUnit 5**;
+- **Mockito**;
+- **JaCoCo**.
+
+## 2. Decisões técnicas e de arquitetura
 
 Durante o desenvolvimento, fui tomando algumas decisões técnicas que considerei importante documentar. De cara, em relação à arquitetura do desafio, optei por implementar em camadas (Controller, Service, Repository), para que cada peça do projeto tenha responsabilidades bem definidas. Abaixo, cito mais algumas decisões importantes:
 
-### 1.1 Separação entre domínio e contrato (DTOs)
-Como boa prática, utilizei a estratégia de desacoplar a entidade JPA (`Coupon`) dos (`DTOs`), para evitar a exposição de detalhes internos do banco de dados e para que API evolua obedecendo as melhores práticas.
--  Os DTOs foram implementados utilizando `Records` (do Java 14+), que, por sua vez, garante imutabilidade, código muito mais conciso e legível para o transporte dos dados.
+- **2.1** - Mesmo sendo de praxe, ressalto que utilizei a estratégia de desacoplar a entidade JPA (`Coupon`) dos (`DTOs`), para evitar a exposição de detalhes internos do banco de dados e para que API evolua obedecendo as melhores práticas.
+- **2.2** - Os DTOs foram implementados utilizando `Records` (do Java 14+), que, por sua vez, garante imutabilidade, código muito mais conciso e legível para o transporte dos dados.
+- **2.3** - Evitei o uso de `@Autowired` diretamente nos atributos. Sendo assim, utilizei a anotação `@RequiredArgsConstructor` do Lombok para realizar a injeção de dependência via construtor, seguindo as boas práticas. Isso favorece a imutabilidade dos componentes, além de facilitar a escrita de testes unitários sem a necessidade de mocks complexos ou contêineres Spring.
 
-### 1.2 Validação de dados de acordo com o contrato da API
-Seguindo a recomendação de rigor no contrato da API, implementei a primeira camada de validação diretamente nos DTOs utilizando Bean Validation, sendo assim:
-- Campos como data de expiração (`@Future`) e valor de desconto (`@DecimalMin`) já são validados na chegada da requisição.
-- Para garantir que a aplicação se comunique exatamente no formato exigido (com milissegundos e fuso horário Z), utilizei a anotação `@JsonFormat` nos campos de data. Dessa forma, assegurei que fica coerente com a especificação do desafio.
+Seguindo a recomendação de rigor no contrato da API, antecipei as validações:
 
-### 1.3 Regras de negócio separadas na camada service
-- Na camada de serviço foi implementei o método `normalizarCodigo` que utiliza regex para remover caracteres especiais e garante que apenas caracteres alfanuméricos sejam persistidos.
-- OBS.: Foi criada uma classe `BusinessException` com o intuito de centralizar os erros semânticos (ex: tentativa de deletar cupom já deletado) e evitar um possível vazamento de exceções genéricas ou de banco de dados para o cliente.
+- **2.4** - Campos como data de expiração (`@Future`) e valor de desconto (`@DecimalMin`) já são validados na chegada da requisição.
+- **2.5** - Para garantir que a aplicação se comunique exatamente no formato exigido (com milissegundos e fuso horário Z), forcei o padrão ISO via `@JsonFormat`. Dessa forma, assegurei que fica coerente com a especificação do desafio.
 
-## 2. Validação e testes implementados
+Decidi manter as regras de negócio separadas na camada service, então:
 
-*(Em desenvolvimento: os testes serão detalhados depois, conforme a implementação das regras de negócio no Service)*
+- **2.6** - Implementei o método `normalizarCodigo` com Regex, garantindo que apenas caracteres alfanuméricos sejam persistidos, independente da sujeira enviada no input.
+- **2.7** - Para viabilizar o soft delete, implementei a estratégia da deleção lógica ao invés da remoção física dos registros, apenas marcando o cupom como `DELETED` e preenchendo o timestamp `deletedAt`. Isso preserva o histórico dos dados.
+- **2.8** - Criei a `BusinessException` para centralizar erros de regra de negócio (ex: cupom já deletado). Isso evita o vazamento de exceções genéricas (500) ou de infraestrutura para o cliente final.
 
-## 3. O que eu faria diferente com mais tempo
+E, sobre o tratamento de erros e Swagger:
 
-## 4. Como executar
+- **2.9** - Implementei um `GlobalExceptionHandler` utilizando o `ProblemDetail` (nativo do Spring Boot 3). Isso foi feito com o intuito de padronizar as respostas de erro da API RESTful, seguindo a especificação RFC 7807.
+- **2.10** - Utilizei anotações do Swagger (`@Operation`, `@ApiResponse`) na Controller para que a documentação reflita exatamente o comportamento dos códigos HTTP (201, 204, 400, 404), facilitando o consumo da API.
+
+## 3. Estratégia de Testes e qualidade
+
+A qualidade do projeto ficou garantida pela alta cobertura de testes, cobrindo tanto a lógica de negócio isolada quanto o cumprimento do contrato da API. Dessa forma, temos aqui:
+
+### 3.1 Testes unitários 
+Concentrei na classe `CouponService`, onde reside a maior parte das regras de negócio. Utilizei o **Mockito** para isolar as dependências (como Repository e Mapper). Aqui, garanti o funcionamento de cenários como a normalização de códigos via Regex e o lançamento correto das `BusinessExceptions`.
+
+### 3.2 Testes de integração
+Utilizei **MockMvc** com o contexto do Spring carregado (`@SpringBootTest`). Para validar o fluxo de ponta a ponta, foi utilizado o banco em memória (**H2**). Nesse teste foram feitas:
+- A verificação da serialização e desserialização dos JSONs.
+- A validação automática dos DTOs.
+- A conferência dos HTTP Status Codes (201, 204, 400) e da persistência real dos dados no banco.
+
+### 3.3 JaCoCo
+Por fim, configurei o plugin **JaCoCo** para validar a cobertura de testes. O relatório final aponta uma cobertura superior a **85%** nas classes principais, superando o requisito inicial de 80%, conforme o print abaixo. 
+
+## 4. O que eu faria diferente com mais tempo
+
+## 5. Como executar
 1.  Clone o repositório.
 2.  Na raiz do projeto, execute:
     ```bash
     ./mvnw spring-boot:run
     ```
-3.  A API estará disponível em `http://localhost:8080`.
+3.  Acesse a documentação e teste a API via Swagger UI:
+    ```
+    http://localhost:8080/swagger-ui.html
+    ```
