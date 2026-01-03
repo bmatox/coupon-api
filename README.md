@@ -39,6 +39,9 @@ E, sobre o tratamento de erros e Swagger:
 - **2.9** - Implementei um `GlobalExceptionHandler` utilizando o `ProblemDetail` (nativo do Spring Boot 3). Isso foi feito com o intuito de padronizar as respostas de erro da API RESTful, seguindo a especificação RFC 7807.
 - **2.10** - Utilizei anotações do Swagger (`@Operation`, `@ApiResponse`) na Controller para que a documentação reflita exatamente o comportamento dos códigos HTTP (201, 204, 400, 404), facilitando o consumo da API.
 
+![Print do Swagger](assets/swagger.png)
+*(Interface do Swagger UI demonstrando os endpoints documentados)*
+
 ## 3. Estratégia de Testes e qualidade
 
 A qualidade do projeto ficou garantida pela alta cobertura de testes, cobrindo tanto a lógica de negócio isolada quanto o cumprimento do contrato da API. Dessa forma, temos aqui:
@@ -55,15 +58,30 @@ Utilizei **MockMvc** com o contexto do Spring carregado (`@SpringBootTest`). Par
 ### 3.3 JaCoCo
 Por fim, configurei o plugin **JaCoCo** para validar a cobertura de testes. O relatório final aponta uma cobertura superior a **85%** nas classes principais, superando o requisito inicial de 80%, conforme o print abaixo. 
 
+![Relatório JaCoCo](assets/jacoco.png)
+*(Relatório de cobertura de código gerado pelo JaCoCo)*
 ## 4. O que eu faria diferente com mais tempo
 
-## 5. Como executar
-1.  Clone o repositório.
-2.  Na raiz do projeto, execute:
-    ```bash
-    ./mvnw spring-boot:run
-    ```
-3.  Acesse a documentação e teste a API via Swagger UI:
-    ```
-    http://localhost:8080/swagger-ui.html
-    ```
+## 5. Como executar a aplicação
+
+### Opção A: Via Docker
+Para rodar a aplicação pronta para uso, sem necessidade de instalar o Java:
+```bash
+docker-compose up --build
+```
+
+### Opção B: Via Maven (Local)
+Caso queira rodar diretamente na sua IDE ou terminal:
+
+1. Clone o repositório.
+2. Na raiz do projeto, execute:
+
+```bash
+./mvnw spring-boot:run
+```
+ 
+**Após subir a aplicação, acesse:**
+
+- **API Base:** http://localhost:8080
+- **Documentação (Swagger):** http://localhost:8080/swagger-ui.html
+- **Console H2:** http://localhost:8080/h2-console
