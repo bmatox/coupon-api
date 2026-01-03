@@ -21,22 +21,22 @@ Resolvi implementar o desafio seguindo os requisitos de nível Pleno, mesmo que 
 
 ## 2. Decisões técnicas e de arquitetura
 
-Durante o desenvolvimento, fui tomando algumas decisões técnicas que considerei importante documentar. De cara, em relação à arquitetura do desafio, optei por implementar em camadas (Controller, Service, Repository), para que cada peça do projeto tenha responsabilidades bem definidas. Abaixo, cito mais algumas decisões importantes:
+Tomei algumas decisões técnicas que vale documentar. De cara, implementei arquitetura em camadas (Controller, Service, Repository) para manter as responsabilidades bem separadas. Abaixo, outras decisões importantes:
 
-- **2.1** - Desacoplei a entidade JPA (`Coupon`) dos DTOs para não expor detalhes internos do banco de dados diretamente na API. Isso facilita a evolução do projeto e segue as boas práticas de separação de responsabilidades.
+- **2.1** - Desacoplei a entidade JPA (`Coupon`) dos DTOs para não expor detalhes internos do banco de dados diretamente na API, facilitando a evolução do projeto futuramente e seguindo as boas práticas de separação de responsabilidades.
 - **2.2** - Implementei os DTOs com `Records` (Java 14+), que garantem imutabilidade e deixam o código mais limpo e conciso.
-- **2.3** - Evitei `@Autowired` em atributos e usei `@RequiredArgsConstructor` do Lombok para injeção via construtor. Além de seguir as boas práticas, isso mantém os componentes imutáveis e facilita os testes unitários.
+- **2.3** - Evitei `@Autowired` em atributos e usei `@RequiredArgsConstructor` do Lombok para injeção via construtor, o que mantém os componentes imutáveis e facilita os testes unitários.
 
 Seguindo a recomendação de rigor no contrato da API, antecipei as validações:
 
 - **2.4** - Campos como data de expiração (`@Future`) e valor de desconto (`@DecimalMin`) já são validados na chegada da requisição.
-- **2.5** - Para garantir que a aplicação se comunique exatamente no formato exigido (com milissegundos e fuso horário Z), forcei o padrão ISO via `@JsonFormat`. Dessa forma, garanto coerência com os requisitos do desafio.
+- **2.5** - Para garantir o formato exato exigido (milissegundos e timezone UTC), configurei `@JsonFormat` com padrão ISO-8601, mantendo o contrato coerente com os requisitos.
 
 Decidi manter as regras de negócio separadas na camada service, então:
 
 - **2.6** - Implementei o método `normalizarCodigo` com Regex, garantindo que apenas caracteres alfanuméricos sejam persistidos, independente da sujeira enviada no input.
-- **2.7** - Para viabilizar o soft delete, implementei a estratégia da deleção lógica ao invés da remoção física dos registros, apenas marcando o cupom como `DELETED` e preenchendo o timestamp `deletedAt`. Isso preserva o histórico dos dados.
-- **2.8** - Criei a `BusinessException` para centralizar erros de regra de negócio (ex: cupom já deletado). Isso evita o vazamento de exceções genéricas (500) ou de infraestrutura para o cliente final.
+- **2.7** - Para o soft delete, implementei deleção lógica ao invés de remoção física, apenas marcando o cupom como `DELETED` e preenchendo o timestamp `deletedAt`, preservando o histórico dos dados.
+- **2.8** - Criei a `BusinessException` para centralizar erros de regra de negócio (ex: cupom já deletado), evitando que exceções genéricas (500) ou de infraestrutura vazem para o cliente final.
 
 E, sobre o tratamento de erros e Swagger:
 
@@ -84,7 +84,7 @@ Algumas decisões priorizaram a simplicidade de execução local (como o uso do 
 2. Implementaria **Spring Security** com tokens JWT (OAuth2) para proteger os endpoints da API.
 3.  Adotaria ferramentas como **Flyway** ou **Liquibase** para versionamento do esquema do banco de dados, ao invés de deixar o Hibernate criar as tabelas automaticamente.
 4.  Criaria pipelines CI/CD (ex: GitHub Actions) para automatizar o build, a execução dos testes e a verificação de qualidade (SonarQube) a cada novo commit, push na main, etc.
-5.  Para viabilizar a Observabilidade, adicionaria o **Spring Boot Actuator** integrado ao Prometheus/Grafana para monitoramento de métricas da aplicação em tempo real.
+5.  Adicionaria **Spring Boot Actuator** integrado ao Prometheus/Grafana para observabilidade e monitoramento de métricas em tempo real.
 
 ## 5. Como executar a aplicação
 
