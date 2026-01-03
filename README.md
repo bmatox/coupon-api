@@ -2,7 +2,7 @@
 
 ## Observação inicial
 
-Embora a proposta original deste desafio técnico contemple requisitos para o nível Júnior, optei por desenvolvê-lo mirando a régua mais alta (**nível Pleno**).
+Embora a proposta original do desafio técnico contemple requisitos para o nível Júnior, optei por desenvolvê-lo mirando a régua mais alta (**nível Pleno**).
 
 Tomei essa decisão para demonstrar que, independente do nível da vaga, possuo bagagem técnica compatível com desafios de maior complexidade. Essa capacidade é sustentada pela minha experiência prática com projetos de complexidade superior (arquiteturas distribuídas/microsserviços) e que mantenho atualmente em produção.
 
@@ -47,6 +47,18 @@ E, sobre o tratamento de erros e Swagger:
 
 ![Print do Swagger](assets/swagger.png)
 *(Interface do Swagger UI demonstrando os endpoints documentados)*
+
+Abaixo, apresento dois cenários que demonstram validam a solução:
+
+**Sucesso na criação:** 
+
+![Swagger Sucesso](assets/swagger-sucesso.png)
+*(Requisição com código válido e retorno formatado em ISO-8601 UTC)*
+
+**Falha na criação por código inválido após a limpeza:**
+
+![Swagger Validação](assets/swagger-falhando.png)
+*(O código VAL@10 possui 6 caracteres, mas após a remoção do @ pela aplicação, ele resulta em apenas 5. A API identifica que o dado não atende aos requisitos e retorna um erro 400 padronizado - RFC 7807)*
 
 ## 3. Estratégia de testes e qualidade
 
