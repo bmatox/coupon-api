@@ -1,6 +1,6 @@
 # Desafio técnico (Projeto Tenda) - Coupon API
 
-## 1. Teck Stack
+## 1. Tech Stack
 
 - **Java 17**;
 - **Spring Boot 3.5.9**
@@ -85,3 +85,30 @@ Caso queira rodar diretamente na sua IDE ou terminal:
 - **API Base:** http://localhost:8080
 - **Documentação (Swagger):** http://localhost:8080/swagger-ui.html
 - **Console H2:** http://localhost:8080/h2-console
+
+## 6. Como executar os testes
+
+Para validar a qualidade do código e gerar os relatórios de cobertura:
+
+### 6.1 Rodar todos os testes
+No terminal, execute:
+
+```bash
+./mvnw clean test
+```
+
+### 6.2 Gerar Relatório de Cobertura (JaCoCo)
+Para gerar o site com as métricas:
+
+```bash
+./mvnw clean verify jacoco:report
+```
+
+Após o comando, abra o arquivo abaixo no navegador:
+
+```
+target/site/jacoco/index.html
+```
+
+
+
