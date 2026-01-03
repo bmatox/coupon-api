@@ -2,9 +2,9 @@
 
 ## Observação inicial
 
-Embora a proposta original deste desafio técnico fosse direcionada para requisitos de nível Júnior, optei por conta própria por desenvolvê-lo mirando a régua para a oportunidade de **Desenvolvedor Pleno**.
+Embora a proposta original deste desafio técnico contemple requisitos para o nível Júnior, optei por desenvolvê-lo mirando a régua mais alta (**nível Pleno**).
 
-Tomei essa decisão para demonstrar que minha bagagem técnica já é compatível com o próximo nível que é sustentada pela minha experiência prática com projetos de complexidade superior (arquiteturas distribuídas/microsserviços) e que mantenho atualmente em produção.
+Tomei essa decisão para demonstrar que, independente do nível da vaga, possuo bagagem técnica compatível com desafios de maior complexidade. Essa capacidade é sustentada pela minha experiência prática com projetos de complexidade superior (arquiteturas distribuídas/microsserviços) e que mantenho atualmente em produção.
 
 ## 1. Tech Stack
 
@@ -66,7 +66,15 @@ Por fim, configurei o plugin **JaCoCo** para validar a cobertura de testes. O re
 
 ![Relatório JaCoCo](assets/jacoco.png)
 *(Relatório de cobertura de código gerado pelo JaCoCo)*
+
 ## 4. O que eu faria diferente com mais tempo
+Dado o escopo do desafio, algumas decisões priorizaram a simplicidade de execução local (como o uso do H2). Num cenário produtivo real e com mais tempo, eu evoluiria os seguintes pontos:
+
+1. Migraria o banco H2 (em memória) para um banco como **PostgreSQL** rodando via Docker Compose;
+2. Implementaria **Spring Security** com tokens JWT (OAuth2) para proteger os endpoints da API.
+3.  Adotaria ferramentas como **Flyway** ou **Liquibase** para versionamento do esquema do banco de dados, ao invés de deixar o Hibernate criar as tabelas automaticamente.
+4.  Criaria pipelines CI/CD (ex: GitHub Actions) para automatizar o build, a execução dos testes e a verificação de qualidade (SonarQube) a cada novo commit, push na main, etc.
+5.  Para viabilizar a Observabilidade, adicionaria o **Spring Boot Actuator** integrado ao Prometheus/Grafana para monitoramento de métricas da aplicação em tempo real.
 
 ## 5. Como executar a aplicação
 
