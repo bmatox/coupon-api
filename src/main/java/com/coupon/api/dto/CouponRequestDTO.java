@@ -19,7 +19,7 @@ public record CouponRequestDTO(
 
         @NotNull(message = "A data de expiração é obrigatória")
         @Future(message = "A data de expiração deve ser no futuro")
-        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
         LocalDateTime expirationDate,
 
         Boolean published
