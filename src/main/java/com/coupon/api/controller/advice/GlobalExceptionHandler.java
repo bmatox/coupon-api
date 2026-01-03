@@ -1,6 +1,7 @@
 package com.coupon.api.controller.advice;
 
 import com.coupon.api.domain.exception.BusinessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestControllerAdvice
@@ -19,7 +21,6 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle("Erro de validação nos dados enviados");
         problemDetail.setDetail("Um ou mais campos obrigatórios estão inválidos ou ausentes.");
 
-        // Extrai apenas as mensagens de erro amigáveis
         List<String> errors = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
@@ -44,6 +45,15 @@ public class GlobalExceptionHandler {
         problemDetail.setDetail(ex.getMessage());
         problemDetail.setProperty("timestamp", Instant.now());
 
+        return problemDetail;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problemDetail.setTitle("Conflito de dados");
+        problemDetail.setDetail("Já existe um cupom cadastrado com este código.");
+        problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
 }
