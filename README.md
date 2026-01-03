@@ -1,5 +1,11 @@
 # Desafio técnico (Projeto Tenda) - Coupon API
 
+## Observação inicial
+
+Embora a proposta original deste desafio técnico fosse direcionada para requisitos de nível Júnior, optei por conta própria por desenvolvê-lo mirando a régua para a oportunidade de **Desenvolvedor Pleno**.
+
+Tomei essa decisão para demonstrar que minha bagagem técnica já é compatível com o próximo nível que é sustentada pela minha experiência prática com projetos de complexidade superior (arquiteturas distribuídas/microsserviços) e que mantenho atualmente em produção.
+
 ## 1. Tech Stack
 
 - **Java 17**;
@@ -42,7 +48,7 @@ E, sobre o tratamento de erros e Swagger:
 ![Print do Swagger](assets/swagger.png)
 *(Interface do Swagger UI demonstrando os endpoints documentados)*
 
-## 3. Estratégia de Testes e qualidade
+## 3. Estratégia de testes e qualidade
 
 A qualidade do projeto ficou garantida pela alta cobertura de testes, cobrindo tanto a lógica de negócio isolada quanto o cumprimento do contrato da API. Dessa forma, temos aqui:
 
